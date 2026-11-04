@@ -49,7 +49,8 @@ def main():
     args = p.parse_args()
 
     random.seed(args.seed); np.random.seed(args.seed); torch.manual_seed(args.seed)   # repeatable runs
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    # CHANGED: uses the Apple GPU ("mps") when there is no NVIDIA GPU
+    device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
     os.makedirs(args.out, exist_ok=True)
 
     train_ds = ASVspoofLA(args.root, "train", augment=True)
