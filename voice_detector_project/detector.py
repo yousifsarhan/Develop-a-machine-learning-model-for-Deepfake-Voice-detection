@@ -17,7 +17,8 @@ def label_from_score(score):
 
 class Detector:
     def __init__(self, checkpoint=C.CHECKPOINT, device=None):
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        # CHANGED: uses the Apple GPU ("mps") when there is no NVIDIA GPU
+        self.device = device or ("cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu"))
         ckpt = torch.load(checkpoint, map_location=self.device)
         self.model = build_model(ckpt["model_name"]).to(self.device)
         self.model.load_state_dict(ckpt["state_dict"])
