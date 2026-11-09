@@ -144,7 +144,7 @@ def mp3_bytes():
     with tempfile.TemporaryDirectory() as d:
         w, m = os.path.join(d, "a.wav"), os.path.join(d, "a.mp3")
         open(w, "wb").write(wav_bytes())
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", w, "-codec:a", "libmp3lame", "-b:a", "128k", m], check=True)
+        subprocess.run([A.ffmpeg_exe(), "-y", "-loglevel", "error", "-i", w, "-codec:a", "libmp3lame", "-b:a", "128k", m], check=True)
         return open(m, "rb").read()
 
 

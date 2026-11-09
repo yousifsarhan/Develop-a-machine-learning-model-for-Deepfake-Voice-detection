@@ -1,6 +1,7 @@
 """Audio loading, preprocessing, features, filtering and cues."""
 import io
 import os
+import shutil
 import subprocess
 import tempfile
 
@@ -80,12 +81,21 @@ def add_noise(y, snr_db, rng=np.random):
     return (y + rng.normal(0, np.sqrt(noise_power), len(y))).astype(np.float32)
 
 
+def ffmpeg_exe():
+    """FFmpeg from the PATH, or the copy that comes with the imageio-ffmpeg package."""
+    path = shutil.which("ffmpeg")
+    if path:
+        return path
+    import imageio_ffmpeg
+    return imageio_ffmpeg.get_ffmpeg_exe()
+
+
 def mp3_roundtrip(y, sr, bitrate_kbps):
     """Compress to MP3 with FFmpeg and decode again."""
     with tempfile.TemporaryDirectory() as d:
         wav_path, mp3_path = os.path.join(d, "a.wav"), os.path.join(d, "a.mp3")
         sf.write(wav_path, y, sr)
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", wav_path,
+        subprocess.run([ffmpeg_exe(), "-y", "-loglevel", "error", "-i", wav_path,
                         "-codec:a", "libmp3lame", "-b:a", f"{bitrate_kbps}k", mp3_path], check=True)
         out, _ = librosa.load(mp3_path, sr=sr, mono=True)
     out = out[:len(y)]
