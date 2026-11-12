@@ -12,16 +12,16 @@
     <section id="home">
       <h2>Is this voice real or AI-generated?</h2>
       <p>Upload a recording and get an indication in a few seconds.</p>
-      <p class="note">Files are analyzed on your computer and are not sent anywhere.</p>
+      <p class="note">For videos, the first audio track is analyzed.</p>
     </section>
 
     <section id="upload-section">
-      <h3>Upload audio</h3>
+      <h3>Upload audio or video</h3>
       <div id="drop" tabindex="0">
-        <p>Drag and drop an audio file here</p>
-        <p class="note">WAV or MP3, up to 50 MB</p>
+        <p>Drag and drop a recording here</p>
+        <p class="note">WAV, MP3, M4A, FLAC, MP4, MOV, and more · 50 MB / 5 minutes</p>
         <button id="browse" type="button">Browse files</button>
-        <input id="file-input" type="file" accept=".wav,.mp3,audio/wav,audio/mpeg" hidden>
+        <input id="file-input" type="file" hidden>
       </div>
       <p id="error" class="error" role="alert" hidden></p>
       <div id="file-card" hidden>
