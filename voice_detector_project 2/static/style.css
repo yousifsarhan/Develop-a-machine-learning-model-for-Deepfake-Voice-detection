@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap');
 body { font-family: Arial, Helvetica, sans-serif; margin: 0; color: #111; background: #fff; }
 header { background: #f2f2f2; border-bottom: 1px solid #999; padding: 10px 24px; }
 header h1 { font-size: 20px; margin: 0; }
@@ -29,3 +30,100 @@ button.active { background: #bbb; }
 #playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #000; left: 0; pointer-events: none; }
 audio { width: 100%; margin-top: 10px; }
 input[type=number] { width: 70px; }
+
+
+/* Violet studio theme */
+:root {
+  color-scheme: dark;
+  --text: #f7f0ff;
+  --muted: #cbbddd;
+  --border: #4b375f;
+  --accent: #d5b6ff;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  min-height: 100vh;
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  color: var(--text);
+  background: radial-gradient(ellipse at 50% 170px, #3c235a, transparent 560px), #100b1b;
+}
+header {
+  background: #100b1bbd;
+  border-bottom: 1px solid #ffffff20;
+  padding: 18px max(20px, calc((100% - 900px) / 2));
+}
+header h1 { display: flex; gap: 12px; align-items: center; font-size: 16px; }
+header h1::before, #drop::before {
+  content: '';
+  display: block;
+  background: linear-gradient(135deg, #f6e3ff, #b171ff);
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+}
+header h1::before { width: 22px; height: 22px; flex: none; }
+main { max-width: 948px; padding: 0 24px 64px; }
+#home { margin: 0; padding: clamp(44px, 8vw, 80px) 0 24px; }
+#home h2 {
+  max-width: 650px;
+  margin: 0 auto 16px;
+  font-size: clamp(2.5rem, 7vw, 4.75rem);
+  line-height: 1;
+  letter-spacing: -.062em;
+  text-wrap: balance;
+}
+#home p, .note, #file-info, #steps li { color: var(--muted); }
+section:not(#home) {
+  margin-top: 20px;
+  padding: clamp(16px, 3vw, 28px);
+  background: #1a1228;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px #08041066;
+}
+h3 { margin: 0 0 16px; }
+#drop {
+  padding: clamp(28px, 5vw, 46px) 16px;
+  border: 1px dashed #9b76bf;
+  border-radius: 16px;
+  background: radial-gradient(ellipse at top, #482d67, transparent 85%), #231633;
+}
+#drop::before { width: 38px; height: 38px; margin: 0 auto 16px; }
+#drop p { margin: 0 0 8px; }
+#drop p:first-of-type { font-size: 1.125rem; font-weight: 600; }
+#drop.over { border-color: #f6e2ff; background: #4a3065; }
+button, .button {
+  display: inline-block;
+  font: 600 .875rem 'Instrument Sans', system-ui, sans-serif;
+  color: var(--text);
+  background: #2c203a;
+  border: 1px solid #665174;
+  border-radius: 10px;
+  padding: 10px 15px;
+}
+button:hover, .button:hover { background: #473158; }
+button.active { background: #62467d; border-color: #bc9adc; }
+#browse, button.primary { background: var(--accent); color: #24123a; border-color: transparent; }
+#browse { margin-top: 12px; }
+#browse:hover, button.primary:hover { background: #ead6ff; }
+button:disabled { opacity: .6; cursor: wait; }
+:focus-visible { outline: 2px solid #eed9ff; outline-offset: 4px; }
+.error { color: #ffdbeb; background: #4b2036; border-color: #a35b7c; border-radius: 10px; padding: 12px; }
+#file-card { border-color: var(--border); border-radius: 12px; padding: 12px; }
+#file-name, #progress-name { overflow-wrap: anywhere; }
+input, progress { accent-color: var(--accent); }
+#steps li.done { color: var(--text); }
+#scale { border: 0; height: 30px; }
+#scale .z { line-height: 30px; font-weight: 600; }
+.real { background: #24504b; border-radius: 8px 0 0 8px; }
+.unc { background: #55416f; }
+.syn { background: #723951; border-radius: 0 8px 8px 0; }
+#marker { border-top-color: #fff; }
+#scroller { border-color: var(--border); border-radius: 12px; }
+#wave { background: #eadcf6; }
+#playhead { background: #a146f2; }
+#filters, #custom { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+input[type=number] { padding: 8px; border: 1px solid #665174; border-radius: 8px; background: #2c203a; color: var(--text); }
+@media (max-width: 480px) {
+  main { padding-inline: 14px; }
+  .row { gap: 8px; }
+}
