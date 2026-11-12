@@ -9,6 +9,8 @@ import tempfile
 import time
 from datetime import datetime
 
+import imageio_ffmpeg
+import soundfile as sf
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -30,15 +32,23 @@ MEDIA_DEMUXERS = (
 
 def extract_audio(source, destination):
     """Decode the first audio stream to a bounded, mono PCM WAV."""
+    try:
+        with sf.SoundFile(source) as audio:
+            samples = audio.read((MAX_MEDIA_SECONDS + 1) * audio.samplerate, dtype="float32", always_2d=True)
+            mono = A.resample(samples.mean(axis=1), audio.samplerate)
+        sf.write(destination, mono, C.SAMPLE_RATE, subtype="FLOAT")
+        return
+    except sf.LibsndfileError:
+        pass
     subprocess.run(
         [
-            A.ffmpeg_exe(), "-nostdin", "-v", "error",
+            imageio_ffmpeg.get_ffmpeg_exe(), "-nostdin", "-v", "error",
             "-protocol_whitelist", "file", "-format_whitelist", MEDIA_DEMUXERS,
             "-i", source, "-map", "0:a:0", "-vn", "-sn", "-dn",
             "-ac", "1", "-ar", str(C.SAMPLE_RATE), "-c:a", "pcm_f32le",
             "-t", str(MAX_MEDIA_SECONDS + 1), destination,
         ],
-        check=True, timeout=30, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        check=True, timeout=30, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
     )
 
 
@@ -92,7 +102,10 @@ def create_app(detector):
                 error = "The audio track is longer than 5 minutes."
         except subprocess.TimeoutExpired:
             error = "Audio extraction timed out. Try a shorter recording."
-        except (subprocess.CalledProcessError, OSError, ValueError):
+        except (subprocess.CalledProcessError, OSError, ValueError) as exc:
+            app.logger.warning("Media decoding failed: %s", type(exc).__name__)
+            if isinstance(exc, subprocess.CalledProcessError):
+                app.logger.warning("FFmpeg: %s", exc.stderr.decode(errors="replace")[:400])
             error = "No readable audio track was found. Try a recording with sound."
         if error:
             if os.path.exists(path):
