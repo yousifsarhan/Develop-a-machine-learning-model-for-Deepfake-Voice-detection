@@ -4,6 +4,7 @@ import io
 import os
 import secrets
 import shutil
+import subprocess
 import tempfile
 import time
 from datetime import datetime
@@ -17,6 +18,28 @@ from flask import Flask, jsonify, render_template, request, send_file
 
 import audio_utils as A
 import config as C
+
+
+# Bound decoded audio independently of the compressed upload size.
+MAX_MEDIA_SECONDS = 300
+MEDIA_DEMUXERS = (
+    "aac,aiff,amr,ape,asf,avi,caf,flac,flv,matroska,webm,mov,mp3,"
+    "mpeg,mpegts,ogg,rm,tta,w64,wav,wv"
+)
+
+
+def extract_audio(source, destination):
+    """Decode the first audio stream to a bounded, mono PCM WAV."""
+    subprocess.run(
+        [
+            A.ffmpeg_exe(), "-nostdin", "-v", "error",
+            "-protocol_whitelist", "file", "-format_whitelist", MEDIA_DEMUXERS,
+            "-i", source, "-map", "0:a:0", "-vn", "-sn", "-dn",
+            "-ac", "1", "-ar", str(C.SAMPLE_RATE), "-c:a", "pcm_f32le",
+            "-t", str(MAX_MEDIA_SECONDS + 1), destination,
+        ],
+        check=True, timeout=30, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
 
 
 def create_app(detector):
@@ -56,22 +79,27 @@ def create_app(detector):
         f = request.files.get("file")
         if f is None or f.filename == "":
             return jsonify(error="No file was selected."), 400
-        ext = os.path.splitext(f.filename)[1].lower()
-        if ext not in C.ALLOWED_EXT:
-            return jsonify(error="Only WAV and MP3 files are supported."), 400
-        fid = secrets.token_hex(8)                          # the user's file name is never used on disk
-        path = os.path.join(tmp_dir, fid + ext)
-        f.save(path)
+        fid = secrets.token_hex(8)
+        path = os.path.join(tmp_dir, fid + ".wav")
         try:
+            with tempfile.TemporaryDirectory(dir=tmp_dir) as upload_dir:
+                source = os.path.join(upload_dir, "upload")
+                f.save(source)
+                size = os.path.getsize(source)
+                extract_audio(source, path)
             y, error = A.preprocess(path)
-        except Exception:
-            os.remove(path)
-            return jsonify(error="The file could not be read. It may be corrupted."), 400
+            if not error and len(y) > MAX_MEDIA_SECONDS * C.SAMPLE_RATE:
+                error = "The audio track is longer than 5 minutes."
+        except subprocess.TimeoutExpired:
+            error = "Audio extraction timed out. Try a shorter recording."
+        except (subprocess.CalledProcessError, OSError, ValueError):
+            error = "No readable audio track was found. Try a recording with sound."
         if error:
-            os.remove(path)
+            if os.path.exists(path):
+                os.remove(path)
             return jsonify(error=error), 400
         files[fid] = {"path": path, "name": os.path.basename(f.filename), "time": time.time(),
-                      "size": os.path.getsize(path), "duration": len(y) / C.SAMPLE_RATE, "result": None}
+                      "size": size, "duration": len(y) / C.SAMPLE_RATE, "result": None}
         return jsonify(id=fid, name=files[fid]["name"], duration=files[fid]["duration"], size=files[fid]["size"])
 
     # ---- UC02: classify (FR02, FR03) and data for UC04 ----
