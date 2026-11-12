@@ -3,6 +3,8 @@
 A local speech analysis application for the Ahlia University graduation project. Upload a WAV or MP3 file in the Flask interface, or use the CLI with WAV, MP3 or FLAC. The interface includes waveform and spectrogram views, band-filtered playback, optional sound cues, and an exportable summary.
 
 ## Quick start
+deactivate
+python3 app.py
 
 From this directory, with Python 3.11–3.13:
 
