@@ -59,7 +59,7 @@ class AasistDetector:
         windows = torch.from_numpy(segments_for_aasist(y))
         margins = []
         with torch.inference_mode():
-            for batch in windows.split(4):
+            for batch in windows.split(1 if self.device == "cpu" else 4):
                 _, logits = self.model(batch.to(self.device))
                 margins.append((logits[:, 1] - logits[:, 0]).cpu().numpy())
         return np.concatenate(margins)
