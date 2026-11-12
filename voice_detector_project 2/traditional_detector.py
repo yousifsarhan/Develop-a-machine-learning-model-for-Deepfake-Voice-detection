@@ -3,7 +3,6 @@ import json
 from functools import lru_cache
 from pathlib import Path
 
-import librosa
 import numpy as np
 from scipy.fft import dct, rfft
 from scipy.special import expit
@@ -19,7 +18,22 @@ MODEL_PATH = Path(__file__).with_name("artifacts") / "traditional.json"
 
 @lru_cache(maxsize=1)
 def mel_bank():
-    return librosa.filters.mel(sr=C.SAMPLE_RATE, n_fft=512, n_mels=40)
+    # Slaney-spaced triangles with area normalization, as used during training.
+    step = 200 / 3
+    log_step = np.log(6.4) / 27
+    nyquist = C.SAMPLE_RATE / 2
+    mel_max = 15 + np.log(nyquist / 1000) / log_step
+    mel_edges = np.linspace(0, mel_max, 42)
+    hz_edges = np.where(mel_edges < 15, mel_edges * step,
+                        1000 * np.exp(log_step * (mel_edges - 15)))
+    frequencies = np.fft.rfftfreq(512, 1 / C.SAMPLE_RATE)
+    widths = np.diff(hz_edges)
+    ramps = hz_edges[:, None] - frequencies
+    lower = -ramps[:-2] / widths[:-1, None]
+    upper = ramps[2:] / widths[1:, None]
+    weights = np.maximum(0, np.minimum(lower, upper)).astype(np.float32)
+    weights *= (2 / (hz_edges[2:] - hz_edges[:-2]))[:, None]
+    return weights
 
 
 def features(segment):
