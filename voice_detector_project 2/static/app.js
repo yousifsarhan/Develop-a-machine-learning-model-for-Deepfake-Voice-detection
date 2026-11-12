@@ -58,10 +58,15 @@ $("analyze").onclick = async () => {
   showError(""); $("progress-name").textContent = $("file-name").textContent;
   show("upload-section", false); show("progress-section"); startProgress();
   try {
-    const res = await fetch(`/api/analyze/${fileId}`, { method: "POST" });
+    const res = await fetch(`/api/analyze/${fileId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+      signal: AbortSignal.timeout(90000),
+    });
     const data = await res.json();
     stopProgress(); show("progress-section", false);
-    if (!res.ok) { show("upload-section"); showError(data.error); return; }
+    if (!res.ok) { show("upload-section"); showError(data.error || `Analysis failed (HTTP ${res.status}). Please retry.`); return; }
     showResult(data);
   } catch (e) { stopProgress(); show("progress-section", false); show("upload-section"); showError("The analysis failed."); }
 };
