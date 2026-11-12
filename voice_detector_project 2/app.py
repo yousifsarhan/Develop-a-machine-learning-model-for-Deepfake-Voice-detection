@@ -175,13 +175,8 @@ def create_app(detector):
 if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument("--detector", default="aasist", choices=["aasist", "cnn"],
-                    help="aasist = pretrained AASIST (default), cnn = our own trained CNN")
+    from inference import DETECTORS, load_detector
+
+    ap.add_argument("--detector", default="aasist", choices=DETECTORS)
     args = ap.parse_args()
-    if args.detector == "aasist":
-        from aasist_detector import AasistDetector
-        det = AasistDetector()
-    else:
-        from detector import Detector
-        det = Detector()
-    create_app(det).run(host="127.0.0.1", port=5000)
+    create_app(load_detector(args.detector)).run(host="127.0.0.1", port=5000)

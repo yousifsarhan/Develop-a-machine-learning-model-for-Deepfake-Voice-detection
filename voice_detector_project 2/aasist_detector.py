@@ -48,10 +48,7 @@ class AasistDetector:
             cfg = json.load(f)
         self.model = module.Model(cfg).to(self.device)
         path = os.path.join(AASIST_DIR, "AASIST.pth")
-        try:
-            state = torch.load(path, map_location=self.device)
-        except Exception:                                   # old checkpoint format, trusted source
-            state = torch.load(path, map_location=self.device, weights_only=False)
+        state = torch.load(path, map_location=self.device, weights_only=True)
         self.model.load_state_dict(state)
         self.model.eval()                                   # fixed behaviour: same file, same result (NFR04)
         self.calibration = load_calibration()
@@ -59,10 +56,13 @@ class AasistDetector:
     def margins(self, y):
         """Raw-amplitude 16 kHz mono audio -> bonafide-minus-spoof margin of each segment."""
         torch = self.torch
-        x = torch.from_numpy(segments_for_aasist(y)).to(self.device)
-        with torch.no_grad():
-            _, logits = self.model(x)                       # shape (segments, 2): index 0 spoof, 1 bonafide
-        return (logits[:, 1] - logits[:, 0]).cpu().numpy()
+        windows = torch.from_numpy(segments_for_aasist(y))
+        margins = []
+        with torch.inference_mode():
+            for batch in windows.split(4):
+                _, logits = self.model(batch.to(self.device))
+                margins.append((logits[:, 1] - logits[:, 0]).cpu().numpy())
+        return np.concatenate(margins)
 
     def score_audio(self, y):
         m = self.margins(y)

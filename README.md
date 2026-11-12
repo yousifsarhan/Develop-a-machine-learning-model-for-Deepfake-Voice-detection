@@ -1,2 +1,11 @@
-Develop-a-machine-learning-model-for-Deepfake-Voice-detection
-Develop a machine learning model capable of analyzing audio recordings and distinguishing between real human voices and AI-generated voices. The model will use audio processing and feature extraction techniques to identify patterns associated with synthetic speech, providing users with a detection result and a confidence score.
+# Deepfake Voice Detection
+
+Graduation project for detecting likely synthetic speech and exploring recordings with waveform, spectrogram, and filtered playback.
+
+See the [project README](voice_detector_project%202/README.md) for setup, browser and command-line inference, model attribution, training, and evaluation.
+
+```sh
+cd "voice_detector_project 2"
+python -m pip install -r requirements.txt
+python app.py
+```

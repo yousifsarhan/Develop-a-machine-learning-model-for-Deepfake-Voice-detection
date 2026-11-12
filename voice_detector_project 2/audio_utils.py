@@ -33,6 +33,8 @@ def check_audio(y, sr=C.SAMPLE_RATE):
     """Return an error message, or None if the audio can be analyzed."""
     if len(y) / sr < C.MIN_DURATION:
         return "The recording is shorter than 1 second."
+    if not np.isfinite(y).all():
+        return "The recording contains invalid samples."
     if np.sqrt(np.mean(y ** 2)) < C.SILENCE_RMS:
         return "The recording is silent."
     return None

@@ -1,0 +1,82 @@
+{
+  "train": {
+    "bonafide": 2580,
+    "spoof": 22707,
+    "rejected": 93,
+    "protocol_sha256": "65a289e4009400b42bb4f1e47ac60938d93f7f595452d1f220d35defc3de8ab8",
+    "speakers": 20,
+    "spoof_attack_ids": [
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A05",
+      "A06"
+    ]
+  },
+  "dev": {
+    "bonafide": 2548,
+    "spoof": 22171,
+    "rejected": 125,
+    "roc_auc": 0.9113649387269368,
+    "eer_approx": 0.17346961787737059,
+    "balanced_accuracy_at_0_5": 0.8124068226083729,
+    "spoof_f1_at_0_5": 0.9201457919151756,
+    "confusion_matrix_at_0_5": [
+      [
+        1906,
+        642
+      ],
+      [
+        2732,
+        19439
+      ]
+    ],
+    "protocol_sha256": "2fedaebf1ba3ae1a9bb7d3ec916804ac237b4eee063a27fa92e6549f03d129c7",
+    "speakers": 20,
+    "spoof_attack_ids": [
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A05",
+      "A06"
+    ]
+  },
+  "eval": {
+    "bonafide": 7354,
+    "spoof": 62824,
+    "rejected": 1059,
+    "roc_auc": 0.866457271092731,
+    "eer_approx": 0.21837825619251158,
+    "balanced_accuracy_at_0_5": 0.7856874488082121,
+    "spoof_f1_at_0_5": 0.8378214029642135,
+    "confusion_matrix_at_0_5": [
+      [
+        6153,
+        1201
+      ],
+      [
+        16668,
+        46156
+      ]
+    ],
+    "protocol_sha256": "84fce576efff092269a0a6ad247d2e9f2f7b4d4e25a4545efb2518da92708036",
+    "speakers": 67,
+    "spoof_attack_ids": [
+      "A07",
+      "A08",
+      "A09",
+      "A10",
+      "A11",
+      "A12",
+      "A13",
+      "A14",
+      "A15",
+      "A16",
+      "A17",
+      "A18",
+      "A19"
+    ]
+  }
+}
