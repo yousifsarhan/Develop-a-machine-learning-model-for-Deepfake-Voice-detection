@@ -50,9 +50,10 @@ def extract_audio(source, destination):
         return
     except sf.LibsndfileError:
         pass
+    executable = shutil.which("ffmpeg") or imageio_ffmpeg.get_ffmpeg_exe()
     subprocess.run(
         [
-            imageio_ffmpeg.get_ffmpeg_exe(), "-nostdin", "-v", "error",
+            executable, "-nostdin", "-v", "error",
             "-protocol_whitelist", "file", "-format_whitelist", MEDIA_DEMUXERS,
             "-i", source, "-map", "0:a:0", "-vn", "-sn", "-dn",
             "-ac", "1", "-ar", str(C.SAMPLE_RATE), "-c:a", "pcm_f32le",
@@ -122,7 +123,10 @@ def create_app(detector):
         path = os.path.join(tmp_dir, fid + ".wav")
         try:
             with tempfile.TemporaryDirectory(dir=tmp_dir) as upload_dir:
-                source = os.path.join(upload_dir, "upload")
+                extension = os.path.splitext(f.filename)[1].lower()
+                if not (extension[1:].isascii() and extension[1:].isalnum() and len(extension) <= 10):
+                    extension = ""
+                source = os.path.join(upload_dir, "upload" + extension)
                 f.save(source)
                 size = os.path.getsize(source)
                 extract_audio(source, path)
@@ -133,6 +137,9 @@ def create_app(detector):
             error = "Audio extraction timed out. Try a shorter recording."
         except ValueError as exc:
             error = str(exc)
+        except FileNotFoundError:
+            app.logger.exception("Audio processing could not find a required file")
+            error = "The server could not access its audio decoder or temporary file. Please try again."
         except (subprocess.CalledProcessError, OSError) as exc:
             app.logger.warning("Media decoding failed: %s", type(exc).__name__)
             if isinstance(exc, subprocess.CalledProcessError):
