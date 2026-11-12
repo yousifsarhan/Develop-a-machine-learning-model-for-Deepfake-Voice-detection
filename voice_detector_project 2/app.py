@@ -1,6 +1,7 @@
 """Flask backend: python app.py  ->  http://localhost:5000"""
 import atexit
 import io
+import math
 import os
 import secrets
 import shutil
@@ -14,8 +15,8 @@ import soundfile as sf
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import librosa.display  # noqa: F401  (used for the spectrogram axes)
 import numpy as np
+from scipy.signal import resample_poly, stft
 from flask import Flask, jsonify, render_template, request, send_file
 
 import audio_utils as A
@@ -34,8 +35,17 @@ def extract_audio(source, destination):
     """Decode the first audio stream to a bounded, mono PCM WAV."""
     try:
         with sf.SoundFile(source) as audio:
-            samples = audio.read((MAX_MEDIA_SECONDS + 1) * audio.samplerate, dtype="float32", always_2d=True)
-            mono = A.resample(samples.mean(axis=1), audio.samplerate)
+            if audio.frames > MAX_MEDIA_SECONDS * audio.samplerate:
+                raise ValueError("The audio track is longer than 5 minutes.")
+            mono = np.empty(audio.frames, dtype=np.float32)
+            offset = 0
+            for block in audio.blocks(blocksize=8192, dtype="float32", always_2d=True):
+                mono[offset:offset + len(block)] = block.mean(axis=1)
+                offset += len(block)
+            mono = mono[:offset]
+            if len(mono) and audio.samplerate != C.SAMPLE_RATE:
+                divisor = math.gcd(audio.samplerate, C.SAMPLE_RATE)
+                mono = resample_poly(mono, C.SAMPLE_RATE // divisor, audio.samplerate // divisor)
         sf.write(destination, mono, C.SAMPLE_RATE, subtype="FLOAT")
         return
     except sf.LibsndfileError:
@@ -52,7 +62,26 @@ def extract_audio(source, destination):
     )
 
 
+def read_decoded_audio(path, normalize=True):
+    samples, _ = sf.read(path, dtype="float32")
+    error = A.check_audio(samples)
+    return (A.peak_normalize(samples) if normalize and not error else samples), error
+
+
+def draw_spectrogram(ax, samples):
+    sample_rate = C.SAMPLE_RATE
+    hop = 256
+    _, _, spectrum = stft(samples, fs=sample_rate, nperseg=1024, noverlap=1024-hop)
+    db = 20 * np.log10(np.maximum(np.abs(spectrum), 1e-5))
+    db -= db.max()
+    return ax.imshow(db, origin="lower", aspect="auto", cmap="gray_r",
+                     extent=(0, len(samples) / sample_rate, 0, sample_rate / 2),
+                     vmin=-80, vmax=0)
+
+
 def create_app(detector):
+    if getattr(detector, "device", None) == "cpu" and hasattr(detector, "torch"):
+        detector.torch.set_num_threads(1)
     app = Flask(__name__)
     app.config["MAX_CONTENT_LENGTH"] = C.MAX_UPLOAD_MB * 1024 * 1024
     tmp_dir = tempfile.mkdtemp(prefix="voicedet_")          # temporary store D1
@@ -97,12 +126,14 @@ def create_app(detector):
                 f.save(source)
                 size = os.path.getsize(source)
                 extract_audio(source, path)
-            y, error = A.preprocess(path)
+            y, error = read_decoded_audio(path)
             if not error and len(y) > MAX_MEDIA_SECONDS * C.SAMPLE_RATE:
                 error = "The audio track is longer than 5 minutes."
         except subprocess.TimeoutExpired:
             error = "Audio extraction timed out. Try a shorter recording."
-        except (subprocess.CalledProcessError, OSError, ValueError) as exc:
+        except ValueError as exc:
+            error = str(exc)
+        except (subprocess.CalledProcessError, OSError) as exc:
             app.logger.warning("Media decoding failed: %s", type(exc).__name__)
             if isinstance(exc, subprocess.CalledProcessError):
                 app.logger.warning("FFmpeg: %s", exc.stderr.decode(errors="replace")[:400])
@@ -121,7 +152,7 @@ def create_app(detector):
         info = get_file(fid)
         if info is None:
             return jsonify(error="File not found. Please upload it again."), 404
-        y, error = A.preprocess(info["path"], normalize=getattr(detector, "normalize_input", True))
+        y, error = read_decoded_audio(info["path"], normalize=getattr(detector, "normalize_input", True))
         if error:
             return jsonify(error=error), 400
         try:
@@ -139,7 +170,7 @@ def create_app(detector):
         info = get_file(fid)
         if info is None:
             return jsonify(error="File not found."), 404
-        y, _ = A.preprocess(info["path"])
+        y, _ = read_decoded_audio(info["path"])
         band = request.args.get("band", "off")
         if band in C.BANDS:
             low, high = C.BANDS[band]
@@ -157,10 +188,9 @@ def create_app(detector):
     # ---- UC04: spectrogram image (FR07) ----
     def spectrogram_png(fid, with_axes=True, figsize=(8, 3)):
         info = get_file(fid)
-        y, _ = A.preprocess(info["path"])
-        S = A.spectrogram_db(y, C.SAMPLE_RATE)
+        y, _ = read_decoded_audio(info["path"])
         fig, ax = plt.subplots(figsize=figsize, dpi=110)
-        img = librosa.display.specshow(S, sr=C.SAMPLE_RATE, hop_length=256, x_axis="time", y_axis="hz", ax=ax, cmap="gray_r")
+        img = draw_spectrogram(ax, y)
         ax.set_ylim(0, 8000)
         ax.set_xlabel("Time (s)"); ax.set_ylabel("Frequency (Hz)")
         fig.colorbar(img, ax=ax, format="%+d dB")
@@ -199,8 +229,7 @@ def create_app(detector):
         for i, t in enumerate(lines):
             fig.text(0.05, 0.86 - i * 0.055, t, fontsize=10)
         ax = fig.add_axes([0.1, 0.1, 0.82, 0.38])
-        S = A.spectrogram_db(A.preprocess(info["path"])[0], C.SAMPLE_RATE)
-        librosa.display.specshow(S, sr=C.SAMPLE_RATE, hop_length=256, x_axis="time", y_axis="hz", ax=ax, cmap="gray_r")
+        draw_spectrogram(ax, read_decoded_audio(info["path"])[0])
         ax.set_ylim(0, 8000)
         buf = io.BytesIO(); fig.savefig(buf, format="png"); plt.close(fig); buf.seek(0)
         return send_file(buf, mimetype="image/png", as_attachment=True, download_name="analysis_summary.png")
