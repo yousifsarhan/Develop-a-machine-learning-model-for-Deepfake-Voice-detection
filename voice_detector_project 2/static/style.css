@@ -29,3 +29,22 @@ button.active { background: #bbb; }
 #playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #000; left: 0; pointer-events: none; }
 audio { width: 100%; margin-top: 10px; }
 input[type=number] { width: 70px; }
+
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body { background: #f5f5fc; color: #25243d; font-family: Inter, system-ui, sans-serif; }
+header { background: #fff; border-color: #dddcef; padding: 16px max(20px, calc((100% - 820px) / 2)); }
+header h1 { font-size: 17px; }
+#home { padding: 20px 0; }
+#home h2 { font-size: clamp(28px, 6vw, 48px); letter-spacing: -.05em; line-height: 1.1; }
+section:not(#home) { padding: 20px; background: #fff; border: 1px solid #dddcef; border-radius: 16px; }
+section h3 { margin-top: 0; }
+#drop { border: 1px dashed #877ac2; border-radius: 12px; background: #f4f1ff; }
+#drop.over { background: #e8e0ff; }
+button, .button { border-color: #c9c4df; border-radius: 8px; padding: 9px 13px; }
+#browse, button.primary { color: #fff; background: #5140a4; border-color: #5140a4; }
+button:disabled { cursor: wait; opacity: .7; }
+button:focus-visible, a:focus-visible, #drop:focus-visible { outline: 2px solid #5140a4; outline-offset: 3px; }
+#file-card { border-color: #dddcef; border-radius: 10px; }
+#file-name { overflow-wrap: anywhere; }
+@media (max-width: 540px) { main { padding-inline: 12px; } section:not(#home) { padding: 14px; } }
