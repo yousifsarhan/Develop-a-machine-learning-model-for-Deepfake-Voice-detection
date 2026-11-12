@@ -1,4 +1,5 @@
-torch>=2.6,<3
+torch @ https://download.pytorch.org/whl/cpu/torch-2.9.1%2Bcpu-cp314-cp314-manylinux_2_28_x86_64.whl ; sys_platform == "linux" and platform_machine == "x86_64" and python_version == "3.14"
+torch>=2.6,<3 ; sys_platform != "linux" or platform_machine != "x86_64" or python_version != "3.14"
 librosa>=0.11,<2
 soundfile>=0.13,<1
 scipy>=1.14,<2
