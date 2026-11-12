@@ -1,0 +1,10 @@
+torch
+librosa
+soundfile
+scipy
+numpy
+scikit-learn
+matplotlib
+flask
+tqdm
+imageio-ffmpeg
