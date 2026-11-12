@@ -68,7 +68,7 @@ $("analyze").onclick = async () => {
     stopProgress(); show("progress-section", false);
     if (!res.ok) { show("upload-section"); showError(data.error || `Analysis failed (HTTP ${res.status}). Please retry.`); return; }
     showResult(data);
-  } catch (e) { stopProgress(); show("progress-section", false); show("upload-section"); showError("The analysis failed."); }
+  } catch (e) { stopProgress(); show("progress-section", false); show("upload-section"); showError(e.name === "TimeoutError" ? "Analysis timed out. Please retry with a shorter clip." : "The analysis connection was interrupted. Please upload the file again."); }
 };
 
 // ---------- result (UC03) ----------
@@ -77,6 +77,7 @@ function showResult(r) {
   peaks = r.peaks;
   $("result-label").textContent = TEXT[r.label];
   $("result-score").textContent = `Score: ${r.score.toFixed(2)}  (0 = real, 1 = synthetic)`;
+  if (r.sampled) $("result-score").textContent += ` · Sampled ${r.n_segments} windows across the recording`;
   $("marker").style.left = `${r.score * 100}%`;
   $("export").href = `/api/export/${fileId}`;
   show("result-section"); show("explore-section");
