@@ -7,17 +7,27 @@ function fmtTime(s) { const m = Math.floor(s / 60); return `${String(m).padStart
 
 // ---------- upload (UC01) ----------
 async function uploadFile(file) {
+  if ($("browse").disabled) return;
+  $("browse").disabled = true;
+  $("browse").textContent = "Uploading…";
+  fileId = null;
   showError(""); show("file-card", false);
   const form = new FormData(); form.append("file", file);
   try {
     const res = await fetch("/api/upload", { method: "POST", body: form });
-    const data = await res.json();
-    if (!res.ok) { showError(data.error); return; }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.id) { showError(data.error || `Upload failed (HTTP ${res.status}). Please retry.`); return; }
     fileId = data.id; duration = data.duration;
     $("file-name").textContent = data.name;
     $("file-info").textContent = `Duration ${fmtTime(data.duration)}   Size ${(data.size / 1048576).toFixed(1)} MB   File accepted`;
     show("file-card");
-  } catch (e) { showError("Could not reach the application. Is it running?"); }
+  } catch (e) {
+    showError("The upload connection was interrupted. Please retry.");
+  } finally {
+    $("browse").disabled = false;
+    $("browse").textContent = "Browse files";
+    $("file-input").value = "";
+  }
 }
 $("browse").onclick = () => $("file-input").click();
 $("file-input").onchange = (e) => e.target.files[0] && uploadFile(e.target.files[0]);
@@ -44,6 +54,7 @@ function startProgress() {
 function stopProgress() { clearInterval(stepTimer); [...$("steps").children].forEach((li) => li.classList.add("done")); $("bar").value = 100; }
 
 $("analyze").onclick = async () => {
+  if (!fileId) return;
   showError(""); $("progress-name").textContent = $("file-name").textContent;
   show("upload-section", false); show("progress-section"); startProgress();
   try {
