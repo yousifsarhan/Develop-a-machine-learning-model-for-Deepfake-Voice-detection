@@ -81,13 +81,12 @@
     <details class="explainer">
       <summary>How the detector works <span aria-hidden="true">▶</span></summary>
       <div class="explainer-body">
-        <input type="checkbox" id="pause-demo">
-        <label for="pause-demo">Pause animation</label>
-        <div class="demo-screen" aria-hidden="true">
-          <div class="demo-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="demo-track"><i></i></div>
-        </div>
-        <ol class="demo-steps">
+        <video controls playsinline preload="metadata" width="640" height="360"
+               style="display:block;width:100%;height:auto;border-radius:14px"
+               aria-label="Animated voice detector walkthrough">
+          <source src="{{ url_for('static', filename='voice-detector-explainer.mp4') }}" type="video/mp4">
+        </video>
+        <ol class="demo-steps transcript" style="animation:none">
           <li><strong>Upload a recording</strong><p>Choose an audio file or a video. For video, the app extracts the first audio track.</p></li>
           <li><strong>Analyze the voice</strong><p>The app converts the audio to mono at 16 kHz. It extracts MFCCs and uses logistic regression to score the recording.</p></li>
           <li><strong>Explore the result</strong><p>Read the score, inspect the waveform and spectrogram, or listen with frequency filters. You can export the result.</p></li>
