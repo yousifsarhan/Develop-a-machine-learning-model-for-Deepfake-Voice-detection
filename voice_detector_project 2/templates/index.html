@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <header><h1>Voice Detection Application</h1></header>
+  <header><h1><span class="voice-logo" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>Voice Detection Application</h1></header>
   <main>
     <section id="home">
       <h2>Is this voice real or AI-generated?</h2>
@@ -78,6 +78,22 @@
         <label>Zoom <input id="zoom" type="range" min="1" max="8" step="0.5" value="1"></label>
       </div>
     </section>
+    <details class="explainer">
+      <summary>How the detector works <span aria-hidden="true">▶</span></summary>
+      <div class="explainer-body">
+        <input type="checkbox" id="pause-demo">
+        <label for="pause-demo">Pause animation</label>
+        <div class="demo-screen" aria-hidden="true">
+          <div class="demo-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="demo-track"><i></i></div>
+        </div>
+        <ol class="demo-steps">
+          <li><strong>Upload a recording</strong><p>Choose an audio file or a video. For video, the app extracts the first audio track.</p></li>
+          <li><strong>Analyze the voice</strong><p>The app converts the audio to mono at 16 kHz. It extracts MFCCs and uses logistic regression to score the recording.</p></li>
+          <li><strong>Explore the result</strong><p>Read the score, inspect the waveform and spectrogram, or listen with frequency filters. You can export the result.</p></li>
+        </ol>
+      </div>
+    </details>
   </main>
   <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
