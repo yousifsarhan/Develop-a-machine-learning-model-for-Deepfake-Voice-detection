@@ -1,0 +1,240 @@
+[
+  {
+    "requirement": "FR01",
+    "test": "upload WAV file",
+    "expected": "accepted, duration about 6 s",
+    "passed": true,
+    "detail": "status 200, duration 6.00 s"
+  },
+  {
+    "requirement": "FR01",
+    "test": "upload MP3 file",
+    "expected": "accepted, duration about 6 s",
+    "passed": true,
+    "detail": "status 200, duration 6.00 s"
+  },
+  {
+    "requirement": "FR01",
+    "test": "upload FLAC file",
+    "expected": "accepted, duration about 6 s",
+    "passed": true,
+    "detail": "status 200, duration 6.00 s"
+  },
+  {
+    "requirement": "FR01",
+    "test": "upload OGG file",
+    "expected": "accepted, duration about 6 s",
+    "passed": true,
+    "detail": "status 200, duration 6.00 s"
+  },
+  {
+    "requirement": "FR01",
+    "test": "upload M4A file",
+    "expected": "accepted, duration about 6 s",
+    "passed": true,
+    "detail": "status 200, duration 6.00 s"
+  },
+  {
+    "requirement": "FR01",
+    "test": "upload MP4 file",
+    "expected": "accepted, duration about 6 s",
+    "passed": true,
+    "detail": "status 200, duration 6.00 s"
+  },
+  {
+    "requirement": "FR01",
+    "test": "upload MOV file",
+    "expected": "accepted, duration about 6 s",
+    "passed": true,
+    "detail": "status 200, duration 6.00 s"
+  },
+  {
+    "requirement": "FR01",
+    "test": "upload file with capital letters in the extension",
+    "expected": "accepted",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "requirement": "FR08",
+    "test": "text file",
+    "expected": "rejected with a message",
+    "passed": true,
+    "detail": "No readable audio track was found. Try a recording with sound."
+  },
+  {
+    "requirement": "FR08",
+    "test": "random bytes named .wav",
+    "expected": "rejected with a message",
+    "passed": true,
+    "detail": "No readable audio track was found. Try a recording with sound."
+  },
+  {
+    "requirement": "FR08",
+    "test": "recording shorter than 1 s",
+    "expected": "rejected",
+    "passed": true,
+    "detail": "The recording is shorter than 1 second."
+  },
+  {
+    "requirement": "FR08",
+    "test": "silent recording",
+    "expected": "rejected",
+    "passed": true,
+    "detail": "The recording is silent."
+  },
+  {
+    "requirement": "FR08",
+    "test": "recording longer than 5 minutes (310 s)",
+    "expected": "rejected",
+    "passed": true,
+    "detail": "The audio track is longer than 5 minutes."
+  },
+  {
+    "requirement": "FR08",
+    "test": "file larger than 50 MB",
+    "expected": "rejected (413)",
+    "passed": true,
+    "detail": "The file is larger than 50 MB."
+  },
+  {
+    "requirement": "NFR04",
+    "test": "truncated MP3 file",
+    "expected": "clear message, no crash",
+    "passed": true,
+    "detail": "No readable audio track was found. Try a recording with sound."
+  },
+  {
+    "requirement": "NFR04",
+    "test": "empty file",
+    "expected": "clear message, no crash",
+    "passed": true,
+    "detail": "No readable audio track was found. Try a recording with sound."
+  },
+  {
+    "requirement": "FR03",
+    "test": "classify a recording",
+    "expected": "label and score between 0 and 1",
+    "passed": true,
+    "detail": "label synthetic, score 0.998, segments 2"
+  },
+  {
+    "requirement": "FR02",
+    "test": "preprocessing (mono, 16 kHz, segments)",
+    "expected": "6 s file gives 1 segment of 4 s at a 2 s hop plus the end",
+    "passed": true,
+    "detail": "2 segments"
+  },
+  {
+    "requirement": "FR04",
+    "test": "result with a confidence score",
+    "expected": "score is returned",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "requirement": "NFR04",
+    "test": "same file analyzed twice",
+    "expected": "identical score",
+    "passed": true,
+    "detail": "0.997879 and 0.997879"
+  },
+  {
+    "requirement": "NFR05",
+    "test": "same content in 7 formats",
+    "expected": "all analyzed",
+    "passed": true,
+    "detail": "score spread 0.019"
+  },
+  {
+    "requirement": "FR05",
+    "test": "waveform data",
+    "expected": "about 900 min/max pairs within -1 and 1",
+    "passed": true,
+    "detail": "900 pairs"
+  },
+  {
+    "requirement": "FR06",
+    "test": "playback audio",
+    "expected": "WAV of the same length",
+    "passed": true,
+    "detail": "6.00 s at 16000 Hz"
+  },
+  {
+    "requirement": "FR07",
+    "test": "spectrogram image",
+    "expected": "PNG image",
+    "passed": true,
+    "detail": "160 KB"
+  },
+  {
+    "requirement": "FR09",
+    "test": "low band keeps 500 Hz, removes 6 kHz",
+    "expected": "6 kHz/500 Hz ratio below 0.05",
+    "passed": true,
+    "detail": "ratio 0.0000"
+  },
+  {
+    "requirement": "FR09",
+    "test": "high band keeps 6 kHz, removes 500 Hz",
+    "expected": "6 kHz/500 Hz ratio above 20",
+    "passed": true,
+    "detail": "ratio 59061.5"
+  },
+  {
+    "requirement": "FR09",
+    "test": "custom range",
+    "expected": "valid range accepted, invalid range refused",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "requirement": "FR10",
+    "test": "three sound cues",
+    "expected": "short, different sounds",
+    "passed": true,
+    "detail": "real 0.40 s, synthetic 0.40 s, uncertain 0.20 s"
+  },
+  {
+    "requirement": "FR11",
+    "test": "export summary",
+    "expected": "PNG after analysis, refused before",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "requirement": "NFR03",
+    "test": "file ids",
+    "expected": "random, different, name not used",
+    "passed": true,
+    "detail": "b56436df626f6980, 680575c35aef5bfc"
+  },
+  {
+    "requirement": "NFR03",
+    "test": "remove a file",
+    "expected": "file is gone afterwards",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "requirement": "NFR03",
+    "test": "server address",
+    "expected": "only the local address in the local version",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "requirement": "NFR01",
+    "test": "analyze a 30 s recording (median of 5)",
+    "expected": "10 s or less",
+    "passed": true,
+    "detail": "analysis 0.01 s, upload and analysis 0.03 s"
+  },
+  {
+    "requirement": "NFR01",
+    "test": "spectrogram image of a 30 s recording",
+    "expected": "3 s or less",
+    "passed": true,
+    "detail": "0.15 s"
+  }
+]

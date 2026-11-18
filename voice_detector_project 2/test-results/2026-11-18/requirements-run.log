@@ -1,0 +1,59 @@
+Matplotlib is building the font cache; this may take a moment.
+[2026-11-18 14:51:24,174] WARNING in app: Media decoding failed: CalledProcessError
+[2026-11-18 14:51:24,175] WARNING in app: FFmpeg: [in#0 @ 0x125e199a0] Error opening input: Invalid data found when processing input
+Error opening input file /var/folders/qd/hpc091511z5gxklr5vh2ptyh0000gn/T/voicedet_mkh670rk/tmpn998ebq1/upload.txt.
+Error opening input files: Invalid data found when processing input
+
+[2026-11-18 14:51:24,200] WARNING in app: Media decoding failed: CalledProcessError
+[2026-11-18 14:51:24,200] WARNING in app: FFmpeg: [in#0 @ 0x13ae199a0] Error opening input: Invalid data found when processing input
+Error opening input file /var/folders/qd/hpc091511z5gxklr5vh2ptyh0000gn/T/voicedet_mkh670rk/tmpeqvj7kdg/upload.wav.
+Error opening input files: Invalid data found when processing input
+
+[src/libmpg123/parse.c:do_readahead():1083] warning: Cannot read next header, a one-frame stream? Duh...
+[2026-11-18 14:51:24,985] WARNING in app: Media decoding failed: CalledProcessError
+[2026-11-18 14:51:24,985] WARNING in app: FFmpeg: [in#0 @ 0x122619c20] Failed to find two consecutive MPEG audio frames.
+[in#0 @ 0x1226199a0] Error opening input: Invalid data found when processing input
+Error opening input file /var/folders/qd/hpc091511z5gxklr5vh2ptyh0000gn/T/voicedet_mkh670rk/tmp511wa6or/upload.mp3.
+Error opening input files: Invalid data found when processing input
+
+[2026-11-18 14:51:25,006] WARNING in app: Media decoding failed: CalledProcessError
+[2026-11-18 14:51:25,006] WARNING in app: FFmpeg: [in#0 @ 0x148e199a0] Error opening input: Invalid data found when processing input
+Error opening input file /var/folders/qd/hpc091511z5gxklr5vh2ptyh0000gn/T/voicedet_mkh670rk/tmp1mvz1wnt/upload.wav.
+Error opening input files: Invalid data found when processing input
+
+PASS FR01   upload WAV file  status 200, duration 6.00 s
+PASS FR01   upload MP3 file  status 200, duration 6.00 s
+PASS FR01   upload FLAC file  status 200, duration 6.00 s
+PASS FR01   upload OGG file  status 200, duration 6.00 s
+PASS FR01   upload M4A file  status 200, duration 6.00 s
+PASS FR01   upload MP4 file  status 200, duration 6.00 s
+PASS FR01   upload MOV file  status 200, duration 6.00 s
+PASS FR01   upload file with capital letters in the extension  
+PASS FR08   text file  No readable audio track was found. Try a recording with sound.
+PASS FR08   random bytes named .wav  No readable audio track was found. Try a recording with sound.
+PASS FR08   recording shorter than 1 s  The recording is shorter than 1 second.
+PASS FR08   silent recording  The recording is silent.
+PASS FR08   recording longer than 5 minutes (310 s)  The audio track is longer than 5 minutes.
+PASS FR08   file larger than 50 MB  The file is larger than 50 MB.
+PASS NFR04  truncated MP3 file  No readable audio track was found. Try a recording with sound.
+PASS NFR04  empty file  No readable audio track was found. Try a recording with sound.
+PASS FR03   classify a recording  label synthetic, score 0.998, segments 2
+PASS FR02   preprocessing (mono, 16 kHz, segments)  2 segments
+PASS FR04   result with a confidence score  
+PASS NFR04  same file analyzed twice  0.997879 and 0.997879
+PASS NFR05  same content in 7 formats  score spread 0.019
+PASS FR05   waveform data  900 pairs
+PASS FR06   playback audio  6.00 s at 16000 Hz
+PASS FR07   spectrogram image  160 KB
+PASS FR09   low band keeps 500 Hz, removes 6 kHz  ratio 0.0000
+PASS FR09   high band keeps 6 kHz, removes 500 Hz  ratio 59061.5
+PASS FR09   custom range  
+PASS FR10   three sound cues  real 0.40 s, synthetic 0.40 s, uncertain 0.20 s
+PASS FR11   export summary  
+PASS NFR03  file ids  b56436df626f6980, 680575c35aef5bfc
+PASS NFR03  remove a file  
+PASS NFR03  server address  
+PASS NFR01  analyze a 30 s recording (median of 5)  analysis 0.01 s, upload and analysis 0.03 s
+PASS NFR01  spectrogram image of a 30 s recording  0.15 s
+
+34/34 checks passed

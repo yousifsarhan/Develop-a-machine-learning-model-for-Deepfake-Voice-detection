@@ -1,0 +1,34 @@
+TEST RESULTS — 18 November 2026
+
+The supplied test_requirements.py completed with 34/34 checks passed.
+The code was run locally on the user's Mac using Python 3.13, in a temporary
+copy of the project. app.py and traditional_detector.py were fetched from
+GitHub main. The other Python modules and saved model files came from the
+existing local checkout. The test script itself was not modified.
+
+These are Flask test-client checks. They do not constitute a browser
+usability study or a test of the hosted Render service.
+
+Measured timing from this run
+- 30-second recording analysis, median of five runs: 0.01 seconds
+- Upload plus analysis, median of five runs: 0.03 seconds
+- 30-second spectrogram generation: 0.15 seconds
+
+AASIST check_aasist.py
+- Check completed successfully.
+- The 10-second generated test tone took 4.40 seconds for the script's timed
+  block, which performs margins() and analyze(). This excludes model loading.
+- This is a model loading/inference smoke check, not an accuracy benchmark.
+
+The requirement tests use generated signals. They verify application behavior,
+not accuracy on genuine and AI-generated speech.
+Warnings in the terminal log are expected decoder errors from the corrupt,
+empty, and truncated files deliberately supplied by the negative tests.
+
+Terminal commands
+cd /tmp/ch6-check
+MPLCONFIGDIR=/tmp/ch6-mpl NUMBA_CACHE_DIR=/tmp/ch6-numba OPENBLAS_NUM_THREADS=1 python3 tests/test_requirements.py
+MPLCONFIGDIR=/tmp/ch6-mpl NUMBA_CACHE_DIR=/tmp/ch6-numba OPENBLAS_NUM_THREADS=1 python3 check_aasist.py
+
+No LA dataset benchmark, modern-voice accuracy study, or human usability study
+was performed in this run.

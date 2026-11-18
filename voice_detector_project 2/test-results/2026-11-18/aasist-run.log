@@ -1,0 +1,6 @@
+loaded AASIST: 297,866 parameters on cpu
+segments: (4, 64600)
+margins: [-1.2325746 -1.3956136 -1.2734224 -1.491415 ]
+analysis result: {'score': 0.6624269094107894, 'label': 'synthetic', 'segment_scores': [0.6493736806598523, 0.6677013268361813, 0.654009640497434, 0.678242669023468], 'n_segments': 4}
+time for 10 s of audio: 4.40 s
+OK: the model loads and runs (a test tone is not speech, so the score itself means nothing).
